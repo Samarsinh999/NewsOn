@@ -7,8 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,12 +30,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
+
                     GlobalScope.launch {
                         val responseData = fetchNewsData()
                       Log.d("Response", responseData.toString())
                     }
-                    HomeScreen()
-                   }
+                    HomeScreen(listOf()) { article ->
+//                        navController.navigate("details/${article.title}")
+                    }
+                }
                 }
             }
         }
@@ -62,6 +63,8 @@ fun GreetingPreview() {
 @Preview
 fun DefaultPreview() {
     NewsOnTapTheme {
-        HomeScreen()
+        HomeScreen(listOf()) { article ->
+//            navController.navigate("details/${article.title}")
+        }
     }
 }

@@ -14,15 +14,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.samar.newsontap.R
 import com.samar.newsontap.fetchNewsData
 import com.samar.newsontap.model.Article
@@ -31,8 +37,9 @@ import com.samar.newsontap.model.Article
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(newsList: List<Any>, param: (Any) -> Unit) {
     val newsList = remember { mutableStateOf<List<Article>>(emptyList()) }
+
 
     LaunchedEffect(Unit) {
         val fetchedNews = fetchNewsData()
@@ -80,10 +87,16 @@ fun NewsListItem(article: Article) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
+            Text(
+                text = "Author: ${article.author ?: "Unknown"}",
+                fontSize = 14.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
             article.imageUrl?.let { imageUrl ->
                 Image(
-                    painter = loadPicture(url = imageUrl),
-                    contentDescription = "News Image",
+                    painter = rememberImagePainter(data = imageUrl),
+                    contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
@@ -101,6 +114,29 @@ fun NewsListItem(article: Article) {
         }
     }
 }
+
+//@Composable
+//fun NewsApp() {
+//    val navController = rememberNavController()
+//    var article by remember { mutableStateOf(Article(url =)) } // Initialize article variable
+//
+//    NavHost(navController = navController, startDestination = "home") {
+//        composable("home") {
+//            HomeScreen(newsList = listOf()) { selectedArticle ->
+//                article =
+//                    selectedArticle as Article // Update article variable when an article is selected
+//                navController.navigate("details/${selectedArticle.url}")
+//            }
+//        }
+//        composable("details/{articleUrl}") { backStackEntry ->
+//            val articleUrl = backStackEntry.arguments?.getString("articleUrl")
+//            // Fetch article details using articleUrl from URL and pass to NewsDetailsScreen
+//            // val article = fetchArticleDetails(articleUrl)
+//            // NewsDetailsScreen(article)
+//        }
+//    }
+//}
+
 
 @Composable
 fun loadPicture(url: String): Painter {
