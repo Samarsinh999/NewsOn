@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/placeholder.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/fontProviderCerts">
+    <path
+        android:fillColor="@android:color/darker_gray"
+        android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM7.94,15.17l-1.41,-1.41L10.17,12 6.53,8.36l1.41,-1.41L11.59,12l-3.65,3.65z" />
+</vector>

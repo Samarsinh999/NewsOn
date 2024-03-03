@@ -34,8 +34,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     GlobalScope.launch {
                         val responseData = fetchNewsData()
-                      Log.d("Response", responseData)
+                      Log.d("Response", responseData.toString())
                     }
+                    HomeScreen()
                    }
                 }
             }
@@ -55,5 +56,12 @@ fun Greeting(modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     NewsOnTapTheme {
         Greeting()
+    }
+}
+@Composable
+@Preview
+fun DefaultPreview() {
+    NewsOnTapTheme {
+        HomeScreen()
     }
 }
