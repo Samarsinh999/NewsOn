@@ -1,12 +1,15 @@
 package com.samar.newsontap.appUI
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -14,22 +17,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.samar.newsontap.R
 import com.samar.newsontap.fetchNewsData
 import com.samar.newsontap.model.Article
 
@@ -37,9 +33,8 @@ import com.samar.newsontap.model.Article
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(newsList: List<Any>, param: (Any) -> Unit) {
+fun HomeScreen() {
     val newsList = remember { mutableStateOf<List<Article>>(emptyList()) }
-
 
     LaunchedEffect(Unit) {
         val fetchedNews = fetchNewsData()
@@ -69,12 +64,17 @@ fun NewsList(newsList: List<Article>) {
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun NewsListItem(article: Article) {
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = { /* Handle item click */ })
+            .clickable {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
+                launcher.launch(intent)
+            }
             .padding(8.dp),
 //        elevation = 4.dp
     ) {
@@ -113,32 +113,4 @@ fun NewsListItem(article: Article) {
             )
         }
     }
-}
-
-//@Composable
-//fun NewsApp() {
-//    val navController = rememberNavController()
-//    var article by remember { mutableStateOf(Article(url =)) } // Initialize article variable
-//
-//    NavHost(navController = navController, startDestination = "home") {
-//        composable("home") {
-//            HomeScreen(newsList = listOf()) { selectedArticle ->
-//                article =
-//                    selectedArticle as Article // Update article variable when an article is selected
-//                navController.navigate("details/${selectedArticle.url}")
-//            }
-//        }
-//        composable("details/{articleUrl}") { backStackEntry ->
-//            val articleUrl = backStackEntry.arguments?.getString("articleUrl")
-//            // Fetch article details using articleUrl from URL and pass to NewsDetailsScreen
-//            // val article = fetchArticleDetails(articleUrl)
-//            // NewsDetailsScreen(article)
-//        }
-//    }
-//}
-
-
-@Composable
-fun loadPicture(url: String): Painter {
-    return painterResource(id = R.drawable.placeholder) // Placeholder image
 }

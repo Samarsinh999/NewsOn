@@ -16,7 +16,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.samar.newsontap.appUI.HomeScreen
 import com.samar.newsontap.ui.theme.NewsOnTapTheme
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
@@ -25,7 +28,6 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         setContent {
             NewsOnTapTheme {
-                // A surface container using the 'background' color from the theme
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -35,36 +37,9 @@ class MainActivity : ComponentActivity() {
                         val responseData = fetchNewsData()
                       Log.d("Response", responseData.toString())
                     }
-                    HomeScreen(listOf()) { article ->
-//                        navController.navigate("details/${article.title}")
-                    }
+                    HomeScreen()
                 }
                 }
             }
         }
     }
-
-@Composable
-fun Greeting(modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NewsOnTapTheme {
-        Greeting()
-    }
-}
-@Composable
-@Preview
-fun DefaultPreview() {
-    NewsOnTapTheme {
-        HomeScreen(listOf()) { article ->
-//            navController.navigate("details/${article.title}")
-        }
-    }
-}
