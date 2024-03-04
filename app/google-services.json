@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1027779905351",
+    "project_id": "newson-fb1a4",
+    "storage_bucket": "newson-fb1a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027779905351:android:5c72989e3e8723ff77ae62",
+        "android_client_info": {
+          "package_name": "com.samar.newsontap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBE_aG8RIGQAQBGw8uVLn3dZAWj0d8zosc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
