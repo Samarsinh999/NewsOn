@@ -8,6 +8,7 @@ import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -16,20 +17,31 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.test.core.app.ActivityScenario.launch
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.samar.newsontap.appUI.HomeScreen
 import com.samar.newsontap.ui.theme.NewsOnTapTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.tasks.await
 
-class MainActivity : ComponentActivity(), ServiceConnection {
-    private val serviceFlow: MutableStateFlow<ServiceNotify?> = MutableStateFlow(null)
-    // Getter to access the service flow
-    fun getServiceFlow(): StateFlow<ServiceNotify?> = serviceFlow
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val token = task.result
+                    Log.d("FCM token:", token)
+                } else {
+                    Log.e("FCM token:", "Failed to retrieve FCM token", task.exception)
+                }
+            })
         setContent {
             NewsOnTapTheme {
                 Box(
@@ -45,24 +57,4 @@ class MainActivity : ComponentActivity(), ServiceConnection {
                 }
             }
         }
-    override fun onStart() {
-        super.onStart()
-        Intent(this, ServiceNotify::class.java).also { intent ->
-            bindService(intent, this, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-        val binder = service as ServiceNotify.ServiceBinder
-//        service.asMutableStateFlow()?.tryEmit(binder.service)service
-        val myService = (binder as? ServiceNotify.ServiceBinder)?.service
-        // Emit the service instance to the flow
-        myService?.let { service ->
-            serviceFlow.tryEmit(service)
-        }
-    }
-
-    override fun onServiceDisconnected(name: ComponentName?) {
-        serviceFlow.tryEmit(null)
-    }
 }

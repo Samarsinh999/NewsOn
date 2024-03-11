@@ -56,15 +56,12 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.util.jar.Manifest
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        RequestNotificationPermissionDialog()
-    }
-    val AppBarHeight = 56.dp
+    val permissionState = rememberPermissionState(permission = POST_NOTIFICATIONS)
     val viewModel = viewModel<NewsViewModel>()
     val articles by viewModel.articles.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
@@ -72,13 +69,19 @@ fun HomeScreen() {
     val sortedArticles = remember { mutableStateOf<List<Article>>(emptyList()) }
     val sortingOption = remember { mutableStateOf("Newest") }
 
-    LaunchedEffect(Unit) {
-        val fetchedNews = fetchNewsData()
-        newsList.value = fetchedNews.articles
-        val sorted = articles.sortedByDescending { Instant.parse(it.publishedAt) }
-        sortedArticles.value = sorted
+    if (permissionState.status.isGranted)  {
+        LaunchedEffect(Unit) {
+            val fetchedNews = fetchNewsData()
+            newsList.value = fetchedNews.articles
+            val sorted = articles.sortedByDescending { Instant.parse(it.publishedAt) }
+            sortedArticles.value = sorted
+        }
+    } else {
+        PermissionScreen()
     }
-    if (articles.isNotEmpty()) {
+
+    if (permissionState.status.isGranted && articles.isNotEmpty()) {
+        val AppBarHeight = 56.dp
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -96,7 +99,7 @@ fun HomeScreen() {
             },
             content = {
                 Column(modifier = Modifier.padding(top = AppBarHeight)) {
-                  NewsList(newsList.value)
+                    NewsList(newsList.value)
                 }
             }
         )
@@ -111,6 +114,7 @@ fun HomeScreen() {
         }
     }
 }
+
 
 @Composable
 fun DropDownMenu(sortingOption: String,
@@ -219,6 +223,7 @@ fun RequestNotificationPermissionDialog() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PermissionDialog(
     onPermissionGranted: () -> Unit,
@@ -253,7 +258,7 @@ fun PermissionDialog(
                 onClick = {
                     // Request permission
                     coroutineScope.launch {
-                        requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        requestPermissionLauncher.launch(POST_NOTIFICATIONS)
                     }
                 }
             ) {
@@ -273,6 +278,7 @@ fun PermissionDialog(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PermissionScreen() {
