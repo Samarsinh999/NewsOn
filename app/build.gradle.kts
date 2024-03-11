@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.messaging)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.core.ktx)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -75,6 +77,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.8")
     implementation ("io.coil-kt:coil-compose:1.3.2")
     implementation ("com.google.firebase:firebase-messaging-ktx:23.4.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.30.1")
 
 
 }
